@@ -4,10 +4,10 @@ const { OK, CREATED, NO_CONTENT } = require("../utils/errors");
 const resource = "item";
 
 const createItem = (req, res) => {
-  const { name, weather, imageURL } = req.body;
+  const { name, weather, imageUrl } = req.body;
   const owner = req.user;
 
-  ClothingItem.create({ name, weather, imageURL, owner })
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(CREATED).send({ data: item });
     })
