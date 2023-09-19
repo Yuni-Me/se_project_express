@@ -1,7 +1,6 @@
 const ClothingItem = require("../models/clothingItem");
 const { handleError } = require("../utils/errorHandler");
 const { OK, CREATED, NO_CONTENT } = require("../utils/errors");
-const resource = "item";
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -26,8 +25,6 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-
-  console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
@@ -64,7 +61,7 @@ const dislikeItem = (req, res) => {
     .then((dislike) => {
       res.status(OK).send(dislike);
     })
-    .catch((e) => {
+    .catch((err) => {
       handleError(res, err);
     });
 };
