@@ -1,6 +1,8 @@
 const ClothingItem = require("../models/clothingItem");
+
 const { handleError } = require("../utils/errorHandler");
-const { OK, CREATED, NO_CONTENT } = require("../utils/errors");
+
+const { CREATED } = require("../utils/errors");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -17,7 +19,7 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(OK).send(items))
+    .then((items) => res.send(items))
     .catch((err) => {
       handleError(res, err);
     });
@@ -29,7 +31,7 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       console.log("Item was deleted");
-      res.status(OK).send(item);
+      res.send(item);
     })
     .catch((err) => {
       handleError(res, err);
@@ -44,7 +46,7 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((like) => {
-      res.status(OK).send(like);
+      res.send(like);
     })
     .catch((err) => {
       handleError(res, err);
@@ -59,7 +61,7 @@ const dislikeItem = (req, res) => {
   )
     .orFail()
     .then((dislike) => {
-      res.status(OK).send(dislike);
+      res.send(dislike);
     })
     .catch((err) => {
       handleError(res, err);

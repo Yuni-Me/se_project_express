@@ -1,5 +1,7 @@
 const User = require("../models/user");
-const { OK, CREATED } = require("../utils/errors");
+
+const { CREATED } = require("../utils/errors");
+
 const { handleError } = require("../utils/errorHandler");
 
 const createUser = (req, res) => {
@@ -16,7 +18,7 @@ const createUser = (req, res) => {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(OK).send(users))
+    .then((users) => res.send(users))
     .catch((err) => {
       handleError(res, err);
     });
@@ -27,7 +29,7 @@ const getUser = (req, res) => {
   User.findById(userId)
     .orFail()
     .then((user) => {
-      res.status(OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       handleError(res, err);

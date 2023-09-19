@@ -2,7 +2,14 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 
+const helmet = require("helmet");
+
+const cors = require("cors");
+
+const { limiter } = require("./middlewares/rateLimiter");
+
 const { PORT = 3001 } = process.env;
+
 const app = express();
 
 mongoose.connect(
@@ -13,6 +20,10 @@ mongoose.connect(
   },
   (e) => console.log("DB error", e),
 );
+
+app.use(helmet());
+app.use(limiter);
+app.use(cors());
 
 const routes = require("./routes");
 
