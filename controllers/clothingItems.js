@@ -29,7 +29,7 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       console.log("Item was deleted");
-      res.status(NO_CONTENT).send(item);
+      res.status(OK).send(item);
     })
     .catch((err) => {
       handleError(res, err);
