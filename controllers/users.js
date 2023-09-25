@@ -5,9 +5,9 @@ const { CREATED } = require("../utils/errors");
 const { handleError } = require("../utils/errorHandler");
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
+  const { name, avatar, email, password } = req.body;
 
-  User.create({ name, avatar })
+  User.create({ name, avatar, email, password })
     .then((user) => {
       res.status(CREATED).send({ data: user });
     })
