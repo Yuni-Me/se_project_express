@@ -10,7 +10,16 @@ const handleError = (res, err) => {
       res.status(BAD_REQUEST).send({ message: `Passed id is invalid` });
       break;
     case "ValidationError":
-      res.status(BAD_REQUEST).send({ message: `Passed invalid data!` });
+      res.status(err.statusCode).send({ message: err.message });
+      break;
+    case "DuplicateEmailError":
+      res.status(err.statusCode).send({ message: err.message });
+      break;
+    case "AuthorizationError":
+      res.status(err.statusCode).send({ message: err.message });
+      break;
+    case "ForbiddenError":
+      res.status(err.statusCode).send({ message: err.message });
       break;
     default:
       res

@@ -6,7 +6,11 @@ const helmet = require("helmet");
 
 const cors = require("cors");
 
+const routes = require("./routes");
+
 const { limiter } = require("./middlewares/rateLimiter");
+
+const { createUser, loginUser } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
 
@@ -25,16 +29,11 @@ app.use(helmet());
 app.use(limiter);
 app.use(cors());
 
-const routes = require("./routes");
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: "650505f494a10e487429ae0f", // _id of test user
-  };
-  next();
-});
-
 app.use(express.json());
+
+app.post("/signup", createUser);
+app.post("/signin", loginUser);
+
 app.use(routes);
 
 app.listen(PORT, () => {

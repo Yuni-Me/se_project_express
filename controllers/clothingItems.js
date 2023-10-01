@@ -4,22 +4,32 @@ const { handleError } = require("../utils/errorHandler");
 
 const { CREATED } = require("../utils/errors");
 
+const { ForbiddenError } = require("../utils/forbiddenError");
+
+const { ValidationError } = require("../utils/validationError");
+
+// create item
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const owner = req.user;
 
-  ClothingItem.create({ name, weather, imageUrl, owner })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
       res.status(CREATED).send({ data: item });
     })
     .catch((err) => {
-      handleError(res, err);
+      try {
+        if (err.name && err.name === "ValidationError") {
+          throw new ValidationError();
+        }
+      } catch (e) {
+        handleError(res, e);
+      }
     });
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.send(items))
+    .then((items) => res.send({ data: items }))
     .catch((err) => {
       handleError(res, err);
     });
@@ -27,11 +37,27 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
-      console.log("Item was deleted");
-      res.send(item);
+      const owner = item.owner.toString();
+      if (owner !== req.user._id) {
+        try {
+          throw new ForbiddenError();
+        } catch (err) {
+          handleError(res, err);
+        }
+      } else {
+        ClothingItem.findByIdAndDelete(itemId)
+          .orFail()
+          .then(() => {
+            console.log("Item was deleted");
+            res.send({ data: item });
+          })
+          .catch((err) => {
+            handleError(res, err);
+          });
+      }
     })
     .catch((err) => {
       handleError(res, err);
