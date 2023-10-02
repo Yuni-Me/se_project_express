@@ -6,17 +6,11 @@ const User = require("../models/user");
 
 const { CREATED } = require("../utils/errors");
 
-const { DuplicateEmailError } = require("../utils/duplicateEmailError");
-
-const { AuthorizationError } = require("../utils/authorizationError");
-
-const { ForbiddenError } = require("../utils/forbiddenError");
-
-const { ValidationError } = require("../utils/validationError");
-
 const { JWT_SECRET } = require("../utils/config");
 
 const { handleError } = require("../utils/errorHandler");
+
+const { DuplicateEmailError } = require("../utils/duplicateEmailError");
 
 // Create User
 const createUser = (req, res) => {
@@ -25,11 +19,7 @@ const createUser = (req, res) => {
   return User.findOne({ email })
     .then((user) => {
       if (user) {
-        try {
-          throw new DuplicateEmailError();
-        } catch (err) {
-          handleError(res, err);
-        }
+        throw new DuplicateEmailError();
       }
       return bcrypt.hash(password, 10).then((hash) =>
         User.create({ name, avatar, email, password: hash })
@@ -43,25 +33,12 @@ const createUser = (req, res) => {
             });
           })
           .catch((err) => {
-            if (err.name && err.name === "ValidationError") {
-              try {
-                throw new ValidationError();
-              } catch (e) {
-                handleError(res, e);
-              }
-            }
             handleError(res, err);
           }),
       );
     })
     .catch((err) => {
-      try {
-        if (err.name && err.name === "ValidationError") {
-          throw new ValidationError();
-        }
-      } catch (error) {
-        handleError(res, err);
-      }
+      handleError(res, err);
     });
 };
 
@@ -75,12 +52,8 @@ const loginUser = (req, res) => {
         }),
       });
     })
-    .catch(() => {
-      try {
-        throw new AuthorizationError();
-      } catch (err) {
-        handleError(res, err);
-      }
+    .catch((err) => {
+      handleError(res, err);
     });
 };
 
@@ -106,12 +79,8 @@ const updateUser = (req, res) => {
   )
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch(() => {
-      try {
-        throw new ForbiddenError();
-      } catch (err) {
-        handleError(res, err);
-      }
+    .catch((err) => {
+      handleError(res, err);
     });
 };
 

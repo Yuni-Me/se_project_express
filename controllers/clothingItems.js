@@ -6,8 +6,6 @@ const { CREATED } = require("../utils/errors");
 
 const { ForbiddenError } = require("../utils/forbiddenError");
 
-const { ValidationError } = require("../utils/validationError");
-
 // create item
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -17,13 +15,7 @@ const createItem = (req, res) => {
       res.status(CREATED).send({ data: item });
     })
     .catch((err) => {
-      try {
-        if (err.name && err.name === "ValidationError") {
-          throw new ValidationError();
-        }
-      } catch (e) {
-        handleError(res, e);
-      }
+      handleError(res, err);
     });
 };
 
