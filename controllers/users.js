@@ -33,12 +33,12 @@ const createUser = (req, res) => {
             });
           })
           .catch((err) => {
-            handleError(res, err);
+            handleError(err);
           }),
       );
     })
     .catch((err) => {
-      handleError(res, err);
+      handleError(err);
     });
 };
 
@@ -53,7 +53,7 @@ const loginUser = (req, res) => {
       });
     })
     .catch((err) => {
-      handleError(res, err);
+      handleError(err);
     });
 };
 
@@ -65,12 +65,13 @@ const getCurrentUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      handleError(res, err);
+      handleError(err);
     });
 };
 
 const updateUser = (req, res) => {
   const userId = req.user._id;
+  // const userId = req.user.id;
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     userId,
@@ -80,7 +81,7 @@ const updateUser = (req, res) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      handleError(res, err);
+      handleError(err);
     });
 };
 

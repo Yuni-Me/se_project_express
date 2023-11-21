@@ -4,7 +4,7 @@ const { JWT_SECRET } = require("../utils/config");
 
 const { handleError } = require("../utils/errorHandler");
 
-const { AuthorizationError } = require("../utils/errors");
+const { AuthorizationError } = require("../utils/authorizationError");
 
 const authUser = (req, res, next) => {
   const { authorization } = req.headers;
@@ -12,7 +12,7 @@ const authUser = (req, res, next) => {
     try {
       throw new AuthorizationError();
     } catch (err) {
-      handleError(res, err);
+      handleError(err);
     }
   }
 
@@ -23,8 +23,8 @@ const authUser = (req, res, next) => {
   } catch (err) {
     try {
       throw new AuthorizationError();
-    } catch (e) {
-      handleError(res, e);
+    } catch (err) {
+      handleError(err);
     }
   }
   req.user = payload;
