@@ -8,18 +8,21 @@ const { CREATED } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
 
-const { handleError } = require("../utils/errorHandler");
+// const { handleError } = require("../utils/errorHandler");
 
 const { DuplicateEmailError } = require("../utils/duplicateEmailError");
+const { ValidationError } = require("../utils/validationError");
+const { AuthorizationError } = require("../utils/authorizationError");
 
 // Create User
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   return User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new DuplicateEmailError();
+        // throw new DuplicateEmailError();
+        return next(new DuplicateEmailError(`Email already exists`));
       }
       return bcrypt.hash(password, 10).then((hash) =>
         User.create({ name, avatar, email, password: hash })
@@ -33,16 +36,22 @@ const createUser = (req, res) => {
             });
           })
           .catch((err) => {
-            handleError(err);
+            // handleError(err);
+            if (err.name && err.name === "ValidationError") {
+              next(new ValidationError("Passed invalid data!"));
+            } else {
+              next(err);
+            }
           }),
       );
     })
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
-const loginUser = (req, res) => {
+const loginUser = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -52,12 +61,13 @@ const loginUser = (req, res) => {
         }),
       });
     })
-    .catch((err) => {
-      handleError(err);
+    .catch(() => {
+      // handleError(err);
+      next(new AuthorizationError("Incorrect email or password"));
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail()
@@ -65,7 +75,8 @@ const getCurrentUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
@@ -81,7 +92,8 @@ const updateUser = (req, res) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 

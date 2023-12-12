@@ -1,11 +1,11 @@
 const { UNAUTHORIZED } = require("./errors");
 
 class AuthorizationError extends Error {
-  constructor() {
-    super();
+  constructor(message) {
+    super(message);
     this.name = "AuthorizationError";
     this.statusCode = UNAUTHORIZED;
-    this.message = `Incorrect email or password`;
+    // this.message = `Incorrect email or password`;
   }
 }
 

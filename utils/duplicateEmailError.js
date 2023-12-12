@@ -1,11 +1,11 @@
 const { CONFLICT } = require("./errors");
 
 class DuplicateEmailError extends Error {
-  constructor() {
-    super();
+  constructor(message) {
+    super(message);
     this.name = "DuplicateEmailError";
     this.statusCode = CONFLICT;
-    this.message = `Email already exists`;
+    // this.message = `Email already exists`;
   }
 }
 

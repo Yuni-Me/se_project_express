@@ -1,13 +1,13 @@
 const ClothingItem = require("../models/clothingItem");
 
-const { handleError } = require("../utils/errorHandler");
+// const { handleError } = require("../utils/errorHandler");
 
 const { CREATED } = require("../utils/errors");
 
 const { ForbiddenError } = require("../utils/forbiddenError");
 
 // create item
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   // console.log(req);
   // console.log(req.user);
   const { name, weather, imageUrl } = req.body;
@@ -17,19 +17,21 @@ const createItem = (req, res) => {
       res.status(CREATED).send({ data: item });
     })
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send({ data: items }))
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   console.log(req.user_id);
   const { itemId } = req.params;
   ClothingItem.findById(itemId)
@@ -42,9 +44,10 @@ const deleteItem = (req, res) => {
         try {
           // throw new ForbiddenError();
 
-          new ForbiddenError();
+          next(new ForbiddenError("You are not allowed to make changes"));
         } catch (err) {
-          handleError(err);
+          // handleError(err);
+          next(err);
         }
       } else {
         ClothingItem.findByIdAndDelete(itemId)
@@ -54,16 +57,18 @@ const deleteItem = (req, res) => {
             res.send({ data: item });
           })
           .catch((err) => {
-            handleError(err);
+            // handleError(err);
+            next(err);
           });
       }
     })
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   // console.log(req.user);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -75,11 +80,12 @@ const likeItem = (req, res) => {
       res.send(like);
     })
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
@@ -90,7 +96,8 @@ const dislikeItem = (req, res) => {
       res.send(dislike);
     })
     .catch((err) => {
-      handleError(err);
+      // handleError(err);
+      next(err);
     });
 };
 
