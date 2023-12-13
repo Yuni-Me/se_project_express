@@ -2,11 +2,18 @@
 
 ## Overview
 
+- Links
 - Description
 - Technologies used
 - Improvement
 - Running the Project
 - Testing
+
+## Links
+
+FrontEnd: https://wtwr.undo.it
+
+BackEnd: https://api.wtwr.undo.it
 
 ## Project Description and Functionality
 
@@ -35,3 +42,7 @@ The eventual goal is to create a server with an API and user authorization.
 ### Testing
 
 Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+
+##
+
+**Created By [Yunia Matamoros](https://github.com/Yuni-Me/)**
