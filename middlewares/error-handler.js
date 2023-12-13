@@ -59,7 +59,7 @@ const errorHandler = (err, req, res, next) => {
   const { statusCode = DEFAULT, message } = err;
   res.status(statusCode).send({
     message:
-      statusCode === DEFAULT ? "An error occured on the server" : message,
+      statusCode === DEFAULT ? "An error has occured on the server" : message,
   });
   next();
 };
