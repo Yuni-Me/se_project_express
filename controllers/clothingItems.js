@@ -5,6 +5,8 @@ const ClothingItem = require("../models/clothingItem");
 const { CREATED } = require("../utils/errors");
 
 const { ForbiddenError } = require("../utils/forbiddenError");
+const { NotFoundError } = require("../utils/notFoundError");
+const { ValidationError } = require("../utils/validationError");
 
 // create item
 const createItem = (req, res, next) => {
@@ -17,25 +19,25 @@ const createItem = (req, res, next) => {
       res.status(CREATED).send({ data: item });
     })
     .catch((err) => {
-      // handleError(err);
-      next(err);
+      if (err.name === "ValidationError") {
+        next(new ValidationError("Passed invalid data!"));
+      } else {
+        next(err);
+      }
     });
 };
 
 const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send({ data: items }))
-    .catch((err) => {
-      // handleError(err);
-      next(err);
-    });
+    .catch(next);
 };
 
 const deleteItem = (req, res, next) => {
   console.log(req.user_id);
   const { itemId } = req.params;
   ClothingItem.findById(itemId)
-    .orFail()
+    .orFail(() => new NotFoundError("No card found with this id."))
     .then((item) => {
       const owner = item.owner.toString();
       // console.log("Owner " + owner);
@@ -75,7 +77,7 @@ const likeItem = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail()
+    .orFail(() => new NotFoundError("No card found with this id."))
     .then((like) => {
       res.send(like);
     })
@@ -91,7 +93,7 @@ const dislikeItem = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail()
+    .orFail(() => new NotFoundError("No card found with this id."))
     .then((dislike) => {
       res.send(dislike);
     })

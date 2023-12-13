@@ -4,13 +4,13 @@ const clothingItem = require("./clothingItems");
 
 const user = require("./users");
 
-const { NOT_FOUND } = require("../utils/errors");
+const { NotFoundError } = require("../utils/notFoundError");
 
 router.use("/items", clothingItem);
 router.use("/users", user);
 
-router.use((req, res) => {
-  res.status(NOT_FOUND).send({ message: "Router not found" });
+router.use(() => {
+  throw new NotFoundError("Router not found");
 });
 
 module.exports = router;

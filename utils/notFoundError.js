@@ -1,12 +1,12 @@
 const { NOT_FOUND } = require("./errors");
 
-class DocumentNotFoundError extends Error {
+class NotFoundError extends Error {
   constructor(message) {
     super(message);
-    this.name = "DocumentNotFoundError";
+    this.name = "NotFoundError";
     this.statusCode = NOT_FOUND;
     // this.message = `Data is not found`;
   }
 }
 
-module.exports = { DocumentNotFoundError };
+module.exports = { NotFoundError };

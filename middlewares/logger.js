@@ -21,7 +21,7 @@ const requestLogger = expressWinston.logger({
   ],
 });
 
-const errorLogger = expressWinston.logger({
+const errorLogger = expressWinston.errorLogger({
   transports: [
     new winston.transports.Console({
       format: messageFormat,

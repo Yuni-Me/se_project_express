@@ -8,11 +8,10 @@ const { CREATED } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
 
-// const { handleError } = require("../utils/errorHandler");
-
 const { DuplicateEmailError } = require("../utils/duplicateEmailError");
 const { ValidationError } = require("../utils/validationError");
 const { AuthorizationError } = require("../utils/authorizationError");
+const { NotFoundError } = require("../utils/notFoundError");
 
 // Create User
 const createUser = (req, res, next) => {
@@ -70,7 +69,7 @@ const loginUser = (req, res, next) => {
 const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
-    .orFail()
+    .orFail(() => new NotFoundError("No user found with this id."))
     .then((user) => {
       res.send({ data: user });
     })
@@ -80,20 +79,22 @@ const getCurrentUser = (req, res, next) => {
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const userId = req.user._id;
-  // const userId = req.user.id;
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     userId,
     { $set: { name, avatar } },
     { new: true, runValidators: true },
   )
-    .orFail()
+    .orFail(() => new NotFoundError("No user found with this id."))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      // handleError(err);
-      next(err);
+      if (err.name === "ValidationError") {
+        next(new ValidationError("Passed invalid data!"));
+      } else {
+        next(err);
+      }
     });
 };
 
